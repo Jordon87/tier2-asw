@@ -1,0 +1,151 @@
+void __cdecl RenderAxes(const matrix3x4_t *transform, float flScale, bool bZBuffer)
+{
+  IMatRenderContext *v3; // edi
+  ICallQueue *v4; // esi
+  CFunctor3<void (__cdecl*)(matrix3x4_t const &,float,bool),matrix3x4_t,float,bool,CRefCounted1<CFunctor,CRefCountServiceBase<1,CRefMT> > > *v5; // eax
+  CFunctor *v6; // eax
+  int v7; // eax
+  IMesh *v8; // esi
+  float *m_pCurrPosition; // eax
+  float *v10; // eax
+  float v11; // xmm1_4
+  float v12; // xmm2_4
+  float *v13; // eax
+  float z; // xmm0_4
+  float x; // xmm1_4
+  float *v16; // eax
+  float v17; // xmm1_4
+  float v18; // xmm2_4
+  float *v19; // eax
+  float v20; // xmm0_4
+  float v21; // xmm1_4
+  float *v22; // eax
+  float v23; // xmm1_4
+  float v24; // xmm2_4
+  MaterialPrimitiveType_t m_Type; // ebp
+  int v26; // eax
+  Vector vOrigin; // [esp+24h] [ebp-24Ch] BYREF
+  Vector yAxis; // [esp+30h] [ebp-240h] BYREF
+  Vector zAxis; // [esp+3Ch] [ebp-234h] BYREF
+  Vector xAxis; // [esp+48h] [ebp-228h] BYREF
+  float v31; // [esp+54h] [ebp-21Ch]
+  matrix3x4_t arg1; // [esp+58h] [ebp-218h] BYREF
+  CMeshBuilder v33; // [esp+88h] [ebp-1E8h] BYREF
+
+  InitializeStandardMaterials();
+  v3 = g_pMaterialSystem->GetRenderContext(g_pMaterialSystem);
+  if ( v3 )
+    v3->BeginRender(v3);
+  v4 = v3->GetCallQueue(v3);
+  if ( v4 )
+  {
+    arg1 = *transform;
+    v5 = (CFunctor3<void (__cdecl*)(matrix3x4_t const &,float,bool),matrix3x4_t,float,bool,CRefCounted1<CFunctor,CRefCountServiceBase<1,CRefMT> > > *)operator new(0x4Cu);
+    if ( v5 )
+    {
+      CFunctor3<void (__cdecl *)(matrix3x4_t const &,float,bool),matrix3x4_t,float,bool,CRefCounted1<CFunctor,CRefCountServiceBase<1,CRefMT>>>::CFunctor3<void (__cdecl *)(matrix3x4_t const &,float,bool),matrix3x4_t,float,bool,CRefCounted1<CFunctor,CRefCountServiceBase<1,CRefMT>>>(
+        v5,
+        RenderAxesWithTransform,
+        &arg1,
+        &flScale,
+        &bZBuffer);
+      v4->QueueFunctorInternal(v4, v6);
+    }
+    else
+    {
+      v4->QueueFunctorInternal(v4, 0);
+    }
+  }
+  else
+  {
+    MatrixGetColumn(transform, 0, (Vector *)&xAxis.y);
+    MatrixGetColumn(transform, 1, (Vector *)&yAxis.y);
+    MatrixGetColumn(transform, 2, (Vector *)&zAxis.y);
+    MatrixGetColumn(transform, 3, (Vector *)&vOrigin.y);
+    v7 = s_pWireframe;
+    if ( !bZBuffer )
+      v7 = s_pWireframeIgnoreZ;
+    v3->Bind(v3, (IMaterial *)v7, 0);
+    v8 = v3->GetDynamicMesh(v3, 1, 0, 0, 0);
+    CMeshBuilder::CMeshBuilder(&v33);
+    v33.m_pMesh = v8;
+    v33.m_bGenerateIndices = 1;
+    v33.m_Type = MATERIAL_LINES;
+    v8->SetPrimitiveType(v8, MATERIAL_LINES);
+    v33.m_pMesh->LockMesh(v33.m_pMesh, 6, 6, &v33);
+    v33.m_IndexBuilder.m_nIndexOffset = v33.m_nFirstVertex;
+    v33.m_IndexBuilder.m_pIndexBuffer = &v8->IIndexBuffer;
+    v33.m_IndexBuilder.m_nIndexCount = 0;
+    v33.m_IndexBuilder.m_nMaxIndexCount = 6;
+    v33.m_IndexBuilder.m_bModify = 0;
+    v33.m_IndexBuilder.m_pIndices = v33.m_pIndices;
+    v33.m_IndexBuilder.m_nIndexSize = v33.m_nIndexSize;
+    v33.m_IndexBuilder.m_nCurrentIndex = 0;
+    CVertexBuilder::AttachBegin(&v33.m_VertexBuilder, v8, 6, &v33);
+    v33.m_IndexBuilder.m_nCurrentIndex = 0;
+    CVertexBuilder::Reset(&v33.m_VertexBuilder);
+    m_pCurrPosition = v33.m_VertexBuilder.m_pCurrPosition;
+    *v33.m_VertexBuilder.m_pCurrPosition = vOrigin.y;
+    *++m_pCurrPosition = vOrigin.z;
+    m_pCurrPosition[1] = yAxis.x;
+    *(_DWORD *)v33.m_VertexBuilder.m_pCurrColor = -65536;
+    CVertexBuilder::AdvanceVertex(&v33.m_VertexBuilder);
+    v10 = v33.m_VertexBuilder.m_pCurrPosition;
+    v11 = (float)(xAxis.z * flScale) + vOrigin.z;
+    v12 = (float)(v31 * flScale) + yAxis.x;
+    *v33.m_VertexBuilder.m_pCurrPosition = (float)(xAxis.y * flScale) + vOrigin.y;
+    *++v10 = v11;
+    v10[1] = v12;
+    *(_DWORD *)v33.m_VertexBuilder.m_pCurrColor = -65536;
+    CVertexBuilder::AdvanceVertex(&v33.m_VertexBuilder);
+    v13 = v33.m_VertexBuilder.m_pCurrPosition;
+    z = vOrigin.z;
+    x = yAxis.x;
+    *v33.m_VertexBuilder.m_pCurrPosition = vOrigin.y;
+    *++v13 = z;
+    v13[1] = x;
+    *(_DWORD *)v33.m_VertexBuilder.m_pCurrColor = -16711936;
+    CVertexBuilder::AdvanceVertex(&v33.m_VertexBuilder);
+    v16 = v33.m_VertexBuilder.m_pCurrPosition;
+    v17 = (float)(yAxis.z * flScale) + vOrigin.z;
+    v18 = (float)(zAxis.x * flScale) + yAxis.x;
+    *v33.m_VertexBuilder.m_pCurrPosition = (float)(yAxis.y * flScale) + vOrigin.y;
+    *++v16 = v17;
+    v16[1] = v18;
+    *(_DWORD *)v33.m_VertexBuilder.m_pCurrColor = -16711936;
+    CVertexBuilder::AdvanceVertex(&v33.m_VertexBuilder);
+    v19 = v33.m_VertexBuilder.m_pCurrPosition;
+    v20 = vOrigin.z;
+    v21 = yAxis.x;
+    *v33.m_VertexBuilder.m_pCurrPosition = vOrigin.y;
+    *++v19 = v20;
+    v19[1] = v21;
+    *(_DWORD *)v33.m_VertexBuilder.m_pCurrColor = -16776961;
+    CVertexBuilder::AdvanceVertex(&v33.m_VertexBuilder);
+    v22 = v33.m_VertexBuilder.m_pCurrPosition;
+    v23 = (float)(zAxis.z * flScale) + vOrigin.z;
+    v24 = (float)(xAxis.x * flScale) + yAxis.x;
+    *v33.m_VertexBuilder.m_pCurrPosition = (float)(zAxis.y * flScale) + vOrigin.y;
+    *++v22 = v23;
+    v22[1] = v24;
+    *(_DWORD *)v33.m_VertexBuilder.m_pCurrColor = -16776961;
+    CVertexBuilder::AdvanceVertex(&v33.m_VertexBuilder);
+    if ( v33.m_bGenerateIndices )
+    {
+      m_Type = v33.m_Type;
+      v26 = CMeshBuilder::IndicesFromVertices(&v33, v33.m_Type, v33.m_VertexBuilder.m_nVertexCount);
+      CIndexBuilder::GenerateIndices(&v33.m_IndexBuilder, m_Type, v26);
+    }
+    v33.m_pMesh->UnlockMesh(v33.m_pMesh, v33.m_VertexBuilder.m_nVertexCount, v33.m_IndexBuilder.m_nIndexCount, &v33);
+    v33.m_IndexBuilder.m_pIndexBuffer = 0;
+    v33.m_IndexBuilder.m_nMaxIndexCount = 0;
+    v33.m_VertexBuilder.m_nMaxVertexCount = 0;
+    v33.m_VertexBuilder.m_pVertexBuffer = 0;
+    v33.m_VertexBuilder.m_CompressionType = VERTEX_COMPRESSION_INVALID;
+    v33.m_pMesh = 0;
+    v8->Draw(v8, -1, 0);
+    CMeshBuilder::~CMeshBuilder(&v33);
+  }
+  v3->EndRender(v3);
+  v3->Release(v3);
+}

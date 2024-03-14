@@ -1,0 +1,157 @@
+void __cdecl RenderWireframeBox(
+        const Vector *vOrigin,
+        const QAngle *angles,
+        const Vector *vMins,
+        const Vector *vMaxs,
+        Color c,
+        bool bZBuffer)
+{
+  IMatRenderContext *v6; // esi
+  ICallQueue *v7; // ebx
+  __int64 v8; // xmm0_8
+  float z; // ecx
+  float v10; // edx
+  float v11; // eax
+  CFunctor6<void (__cdecl*)(Vector const &,QAngle const &,Vector const &,Vector const &,Color,bool),Vector,QAngle,Vector,Vector,Color,bool,CRefCounted1<CFunctor,CRefCountServiceBase<1,CRefMT> > > *v12; // eax
+  CFunctor *v13; // eax
+  int v14; // eax
+  IMesh *v15; // ebx
+  int v16; // edi
+  int (*v17)[4]; // ebp
+  int i; // esi
+  float *m_pCurrPosition; // ecx
+  Vector *v20; // eax
+  int v21; // eax
+  float *v22; // ecx
+  int v23; // eax
+  float *p_y; // eax
+  MaterialPrimitiveType_t m_Type; // esi
+  int v26; // eax
+  IMatRenderContext *v27; // [esp+3Ch] [ebp-27Ch]
+  QAngle arg2; // [esp+40h] [ebp-278h] BYREF
+  Vector arg1; // [esp+4Ch] [ebp-26Ch] BYREF
+  Vector arg3; // [esp+58h] [ebp-260h] BYREF
+  Vector arg4; // [esp+64h] [ebp-254h] BYREF
+  CMeshBuilder v32; // [esp+70h] [ebp-248h] BYREF
+  Vector v33[8]; // [esp+258h] [ebp-60h] BYREF
+
+  InitializeStandardMaterials();
+  v6 = materials->GetRenderContext(materials);
+  v27 = v6;
+  if ( v6 )
+    v6->BeginRender(v6);
+  v7 = v6->GetCallQueue(v6);
+  if ( v7 )
+  {
+    v8 = *(_QWORD *)&vMaxs->x;
+    arg4.z = vMaxs->z;
+    z = vMins->z;
+    *(_QWORD *)&arg4.x = v8;
+    v10 = angles->z;
+    *(_QWORD *)&arg3.x = *(_QWORD *)&vMins->x;
+    *(_QWORD *)&arg2.x = *(_QWORD *)&angles->x;
+    v11 = vOrigin->z;
+    arg3.z = z;
+    arg2.z = v10;
+    *(_QWORD *)&arg1.x = *(_QWORD *)&vOrigin->x;
+    arg1.z = v11;
+    v12 = (CFunctor6<void (__cdecl*)(Vector const &,QAngle const &,Vector const &,Vector const &,Color,bool),Vector,QAngle,Vector,Vector,Color,bool,CRefCounted1<CFunctor,CRefCountServiceBase<1,CRefMT> > > *)operator new(0x4Cu);
+    if ( v12 )
+      CFunctor6<void (__cdecl *)(Vector const &,QAngle const &,Vector const &,Vector const &,Color,bool),Vector,QAngle,Vector,Vector,Color,bool,CRefCounted1<CFunctor,CRefCountServiceBase<1,CRefMT>>>::CFunctor6<void (__cdecl *)(Vector const &,QAngle const &,Vector const &,Vector const &,Color,bool),Vector,QAngle,Vector,Vector,Color,bool,CRefCounted1<CFunctor,CRefCountServiceBase<1,CRefMT>>>(
+        v12,
+        RenderWireframeBox,
+        &arg1,
+        &arg2,
+        &arg3,
+        &arg4,
+        &c,
+        &bZBuffer);
+    else
+      v13 = 0;
+    v7->QueueFunctorInternal(v7, v13);
+    v6->EndRender(v6);
+    v6->Release(v6);
+  }
+  else
+  {
+    v14 = s_pWireframe;
+    if ( !bZBuffer )
+      v14 = s_pWireframeIgnoreZ;
+    v6->Bind(v6, (IMaterial *)v14, 0);
+    GenerateBoxVertices(vOrigin, vMins, vMaxs, v33);
+    v15 = v6->GetDynamicMesh(v6, 1, 0, 0, 0);
+    CMeshBuilder::CMeshBuilder(&v32);
+    v32.m_pMesh = v15;
+    v32.m_bGenerateIndices = 1;
+    v32.m_Type = MATERIAL_LINES;
+    v15->SetPrimitiveType(v15, MATERIAL_LINES);
+    v32.m_pMesh->LockMesh(v32.m_pMesh, 48, 48, &v32);
+    v32.m_IndexBuilder.m_nIndexOffset = v32.m_nFirstVertex;
+    v32.m_IndexBuilder.m_pIndexBuffer = &v15->IIndexBuffer;
+    v32.m_IndexBuilder.m_nIndexCount = 0;
+    v32.m_IndexBuilder.m_nMaxIndexCount = 48;
+    v32.m_IndexBuilder.m_bModify = 0;
+    v32.m_IndexBuilder.m_pIndices = v32.m_pIndices;
+    v32.m_IndexBuilder.m_nIndexSize = v32.m_nIndexSize;
+    v32.m_IndexBuilder.m_nCurrentIndex = 0;
+    CVertexBuilder::AttachBegin(&v32.m_VertexBuilder, v15, 48, &v32);
+    v32.m_IndexBuilder.m_nCurrentIndex = 0;
+    CVertexBuilder::Reset(&v32.m_VertexBuilder);
+    v16 = c._color[2] | ((c._color[1] | ((c._color[0] | (c._color[3] << 8)) << 8)) << 8);
+    v17 = s_pBoxFaceIndices;
+    do
+    {
+      for ( i = 0; i < 4; ++i )
+      {
+        m_pCurrPosition = v32.m_VertexBuilder.m_pCurrPosition;
+        v20 = &v33[(*v17)[i]];
+        *v32.m_VertexBuilder.m_pCurrPosition = v20->x;
+        v20 = (Vector *)((char *)v20 + 4);
+        *++m_pCurrPosition = v20->x;
+        m_pCurrPosition[1] = v20->y;
+        *(_DWORD *)v32.m_VertexBuilder.m_pCurrColor = v16;
+        CVertexBuilder::AdvanceVertex(&v32.m_VertexBuilder);
+        if ( i == 3 )
+          v21 = 0;
+        else
+          v21 = i + 1;
+        v22 = v32.m_VertexBuilder.m_pCurrPosition;
+        v23 = (*v17)[v21];
+        *v32.m_VertexBuilder.m_pCurrPosition = v33[v23].x;
+        p_y = &v33[v23].y;
+        *++v22 = *p_y;
+        v22[1] = p_y[1];
+        *(_DWORD *)v32.m_VertexBuilder.m_pCurrColor = v16;
+        CVertexBuilder::AdvanceVertex(&v32.m_VertexBuilder);
+      }
+      ++v17;
+    }
+    while ( (int)v17 < (int)s_pBoxFaceIndicesInsideOut );
+    if ( v32.m_bGenerateIndices )
+    {
+      m_Type = v32.m_Type;
+      v26 = CMeshBuilder::IndicesFromVertices(&v32, v32.m_Type, v32.m_VertexBuilder.m_nVertexCount);
+      CIndexBuilder::GenerateIndices(&v32.m_IndexBuilder, m_Type, v26);
+    }
+    v32.m_pMesh->UnlockMesh(v32.m_pMesh, v32.m_VertexBuilder.m_nVertexCount, v32.m_IndexBuilder.m_nIndexCount, &v32);
+    v32.m_IndexBuilder.m_pIndexBuffer = 0;
+    v32.m_IndexBuilder.m_nMaxIndexCount = 0;
+    v32.m_VertexBuilder.m_nMaxVertexCount = 0;
+    v32.m_VertexBuilder.m_pVertexBuffer = 0;
+    v32.m_VertexBuilder.m_CompressionType = VERTEX_COMPRESSION_INVALID;
+    v32.m_pMesh = 0;
+    v15->Draw(v15, -1, 0);
+    if ( v32.m_VertexBuilder.m_pVertexBuffer
+      && v32.m_VertexBuilder.m_pVertexBuffer->IsDynamic(v32.m_VertexBuilder.m_pVertexBuffer) )
+    {
+      v32.m_VertexBuilder.m_pVertexBuffer->EndCastBuffer(v32.m_VertexBuilder.m_pVertexBuffer);
+    }
+    if ( v32.m_IndexBuilder.m_pIndexBuffer
+      && v32.m_IndexBuilder.m_pIndexBuffer->IsDynamic(v32.m_IndexBuilder.m_pIndexBuffer) )
+    {
+      v32.m_IndexBuilder.m_pIndexBuffer->EndCastBuffer(v32.m_IndexBuilder.m_pIndexBuffer);
+    }
+    v27->EndRender(v27);
+    v27->Release(v27);
+  }
+}

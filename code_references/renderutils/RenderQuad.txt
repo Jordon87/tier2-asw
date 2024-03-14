@@ -1,0 +1,129 @@
+void __cdecl RenderQuad(
+        IMaterial *pMaterial,
+        float x,
+        float y,
+        float w,
+        float h,
+        float z,
+        float s0,
+        float t0,
+        float s1,
+        float t1,
+        const Color *clr)
+{
+  IMatRenderContext *v11; // ebp
+  IMesh *v12; // edi
+  unsigned __int16 v13; // ax
+  float *v14; // eax
+  float *m_pCurrNormal; // eax
+  unsigned __int16 v16; // dx
+  float *v17; // eax
+  float *v18; // eax
+  unsigned __int16 v19; // cx
+  float *v20; // eax
+  float *v21; // eax
+  unsigned __int16 v22; // ax
+  float *v23; // eax
+  float *v24; // eax
+  MaterialPrimitiveType_t v25; // esi
+  int v26; // eax
+  CMeshBuilder meshBuilder; // [esp+30h] [ebp-1ECh] BYREF
+
+  v11 = g_pMaterialSystem->GetRenderContext(g_pMaterialSystem);
+  if ( v11 )
+    v11->BeginRender(v11);
+  v12 = v11->GetDynamicMesh(v11, 1, 0, 0, pMaterial);
+  CMeshBuilder::CMeshBuilder((CMeshBuilder *)&meshBuilder.m_VertexSize_BoneWeight);
+  meshBuilder.m_Type = (MaterialPrimitiveType_t)v12;
+  LOBYTE(meshBuilder.m_IndexBuilder.m_pIndices) = 1;
+  *(_DWORD *)&meshBuilder.m_bGenerateIndices = 7;
+  v12->SetPrimitiveType(v12, MATERIAL_TRIANGLES);
+  (*(void (__thiscall **)(MaterialPrimitiveType_t, int, int, int *))(*(_DWORD *)meshBuilder.m_Type + 68))(
+    meshBuilder.m_Type,
+    4,
+    6,
+    &meshBuilder.m_VertexSize_BoneWeight);
+  meshBuilder.m_IndexBuilder.m_nCurrentIndex = meshBuilder.MeshDesc_t::VertexDesc_t::m_nOffset;
+  meshBuilder.m_IndexBuilder.m_nMaxIndexCount = (int)&v12->IIndexBuffer;
+  meshBuilder.m_IndexBuilder.m_pIndexBuffer = (IIndexBuffer *)meshBuilder.m_pMesh;
+  meshBuilder.m_IndexBuilder.m_nIndexOffset = 0;
+  meshBuilder.m_IndexBuilder.m_nIndexCount = 6;
+  LOBYTE(meshBuilder.m_VertexBuilder.m_VertexSize_Position) = 0;
+  meshBuilder.m_IndexBuilder.m_nOffset = meshBuilder.MeshDesc_t::IndexDesc_t::m_nOffset;
+  meshBuilder.m_IndexBuilder.m_nTotalIndexCount = 0;
+  CVertexBuilder::AttachBegin(
+    (CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_BoneWeight,
+    v12,
+    4,
+    (const MeshDesc_t *)&meshBuilder.m_VertexSize_BoneWeight);
+  meshBuilder.m_IndexBuilder.m_nTotalIndexCount = 0;
+  CVertexBuilder::Reset((CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_BoneWeight);
+  HIBYTE(v13) = clr->_color[3];
+  LOBYTE(v13) = clr->_color[0];
+  *(_DWORD *)meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0] = clr->_color[2] | ((clr->_color[1] | (v13 << 8)) << 8);
+  v14 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[1];
+  *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[1] = s0;
+  v14[1] = t0;
+  m_pCurrNormal = meshBuilder.m_VertexBuilder.m_pCurrNormal;
+  *meshBuilder.m_VertexBuilder.m_pCurrNormal = x;
+  *++m_pCurrNormal = y;
+  m_pCurrNormal[1] = z;
+  CVertexBuilder::AdvanceVertex((CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_BoneWeight);
+  HIBYTE(v16) = clr->_color[3];
+  LOBYTE(v16) = clr->_color[0];
+  *(_DWORD *)meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0] = clr->_color[2] | ((clr->_color[1] | (v16 << 8)) << 8);
+  v17 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[1];
+  *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[1] = s1;
+  v17[1] = t0;
+  v18 = meshBuilder.m_VertexBuilder.m_pCurrNormal;
+  *meshBuilder.m_VertexBuilder.m_pCurrNormal = x + w;
+  *++v18 = y;
+  v18[1] = z;
+  CVertexBuilder::AdvanceVertex((CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_BoneWeight);
+  HIBYTE(v19) = clr->_color[3];
+  LOBYTE(v19) = clr->_color[0];
+  *(_DWORD *)meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0] = clr->_color[2] | ((clr->_color[1] | (v19 << 8)) << 8);
+  v20 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[1];
+  *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[1] = s1;
+  v20[1] = t1;
+  v21 = meshBuilder.m_VertexBuilder.m_pCurrNormal;
+  *meshBuilder.m_VertexBuilder.m_pCurrNormal = x + w;
+  *++v21 = y + h;
+  v21[1] = z;
+  CVertexBuilder::AdvanceVertex((CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_BoneWeight);
+  HIBYTE(v22) = clr->_color[3];
+  LOBYTE(v22) = clr->_color[0];
+  *(_DWORD *)meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0] = clr->_color[2] | ((clr->_color[1] | (v22 << 8)) << 8);
+  v23 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[1];
+  *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[1] = s0;
+  v23[1] = t1;
+  v24 = meshBuilder.m_VertexBuilder.m_pCurrNormal;
+  *meshBuilder.m_VertexBuilder.m_pCurrNormal = x;
+  *++v24 = y + h;
+  v24[1] = z;
+  CVertexBuilder::AdvanceVertex((CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_BoneWeight);
+  if ( LOBYTE(meshBuilder.m_IndexBuilder.m_pIndices) )
+  {
+    v25 = *(_DWORD *)&meshBuilder.m_bGenerateIndices;
+    v26 = CMeshBuilder::IndicesFromVertices(
+            (CMeshBuilder *)&meshBuilder.m_VertexSize_BoneWeight,
+            *(MaterialPrimitiveType_t *)&meshBuilder.m_bGenerateIndices,
+            meshBuilder.m_VertexBuilder.m_nCurrentVertex);
+    CIndexBuilder::GenerateIndices((CIndexBuilder *)&meshBuilder.m_IndexBuilder.m_nOffset, v25, v26);
+  }
+  (*(void (__thiscall **)(MaterialPrimitiveType_t, int, int, int *))(*(_DWORD *)meshBuilder.m_Type + 80))(
+    meshBuilder.m_Type,
+    meshBuilder.m_VertexBuilder.m_nCurrentVertex,
+    meshBuilder.m_IndexBuilder.m_nIndexOffset,
+    &meshBuilder.m_VertexSize_BoneWeight);
+  meshBuilder.m_IndexBuilder.m_nMaxIndexCount = 0;
+  meshBuilder.m_IndexBuilder.m_nIndexCount = 0;
+  meshBuilder.m_VertexBuilder.m_nVertexCount = 0;
+  *(_DWORD *)&meshBuilder.m_VertexBuilder.m_bModify = 0;
+  meshBuilder.m_VertexBuilder.m_NumBoneWeights = -1;
+  meshBuilder.m_Type = MATERIAL_POINTS;
+  v12->Draw(v12, -1, 0);
+  CMeshBuilder::~CMeshBuilder((CMeshBuilder *)&meshBuilder.m_VertexSize_BoneWeight);
+  v11->EndRender(v11);
+  v11->Release(v11);
+}

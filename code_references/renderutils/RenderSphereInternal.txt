@@ -1,0 +1,303 @@
+void __cdecl RenderSphereInternal(
+        const Vector *vCenter,
+        float flRadius,
+        int nTheta,
+        int nPhi,
+        Color c,
+        IMaterial *pMaterial,
+        bool bInsideOut)
+{
+  IMatRenderContext *m_pObject; // edi
+  ICallQueue *v8; // esi
+  float z; // ebx
+  char *v10; // eax
+  __int64 v11; // xmm0_8
+  int v12; // ebx
+  IMatRenderContext_vtbl *v13; // edx
+  int v14; // esi
+  IMatRenderContext *v15; // ecx
+  int v16; // eax
+  int v17; // esi
+  float v18; // xmm0_4
+  int v19; // ecx
+  double v20; // xmm0_8
+  int v21; // ecx
+  float v22; // xmm0_4
+  float v23; // xmm0_4
+  float v24; // xmm0_4
+  float *m_pCurrPosition; // eax
+  float v26; // xmm1_4
+  float v27; // xmm2_4
+  float y; // xmm0_4
+  float v29; // xmm1_4
+  float *m_pCurrNormal; // eax
+  float *v31; // eax
+  __int16 v32; // dx
+  unsigned int m_nCurrentIndex; // eax
+  __int16 v34; // dx
+  int v35; // eax
+  __int16 v36; // dx
+  int v37; // eax
+  int v38; // eax
+  MaterialPrimitiveType_t m_Type; // esi
+  int v40; // eax
+  int nIndexCount_4; // [esp+18h] [ebp-248h]
+  int nIndexCount_4a; // [esp+18h] [ebp-248h]
+  float idx; // [esp+1Ch] [ebp-244h]
+  __int16 idxa; // [esp+1Ch] [ebp-244h]
+  __int16 idxb; // [esp+1Ch] [ebp-244h]
+  float v46; // [esp+20h] [ebp-240h]
+  __int16 v47; // [esp+20h] [ebp-240h]
+  int i; // [esp+24h] [ebp-23Ch]
+  int ia; // [esp+24h] [ebp-23Ch]
+  CMatRenderContextPtr pRenderContext; // [esp+28h] [ebp-238h]
+  __int64 vecPos; // [esp+2Ch] [ebp-234h]
+  float vecPos_8; // [esp+34h] [ebp-22Ch]
+  IMesh *pMesh; // [esp+38h] [ebp-228h]
+  Vector vecNormal; // [esp+3Ch] [ebp-224h] BYREF
+  float theta; // [esp+48h] [ebp-218h]
+  float v56; // [esp+4Ch] [ebp-214h]
+  float v57; // [esp+50h] [ebp-210h]
+  float v58; // [esp+54h] [ebp-20Ch]
+  float flOONTheta; // [esp+58h] [ebp-208h]
+  float flOONTheta_4; // [esp+5Ch] [ebp-204h]
+  float v61; // [esp+60h] [ebp-200h]
+  float v62; // [esp+64h] [ebp-1FCh]
+  Vector4D vecTangent; // [esp+68h] [ebp-1F8h] BYREF
+  CMeshBuilder meshBuilder; // [esp+78h] [ebp-1E8h] BYREF
+
+  InitializeStandardMaterials();
+  m_pObject = materials->GetRenderContext(materials);
+  pRenderContext.m_pObject = m_pObject;
+  if ( m_pObject )
+    m_pObject->BeginRender(m_pObject);
+  v8 = m_pObject->GetCallQueue(m_pObject);
+  if ( v8 )
+  {
+    z = vCenter->z;
+    *(_QWORD *)&vecNormal.x = *(_QWORD *)&vCenter->x;
+    v10 = (char *)operator new(0x38u);
+    if ( v10 )
+    {
+      v11 = *(_QWORD *)&vecNormal.x;
+      *((_DWORD *)v10 + 3) = 1;
+      *((_DWORD *)v10 + 9) = nTheta;
+      *((Color *)v10 + 11) = c;
+      *(_QWORD *)(v10 + 20) = v11;
+      *((_DWORD *)v10 + 10) = nPhi;
+      v10[52] = bInsideOut;
+      *(_DWORD *)v10 = &CFunctor7<void (__cdecl *)(Vector const &,float,int,int,Color,IMaterial *,bool),Vector,float,int,int,Color,IMaterial *,bool,CRefCounted1<CFunctor,CRefCountServiceBase<1,CRefMT>>>::`vftable'{for `CFunctor'};
+      *((_DWORD *)v10 + 2) = &CFunctor7<void (__cdecl *)(Vector const &,float,int,int,Color,IMaterial *,bool),Vector,float,int,int,Color,IMaterial *,bool,CRefCounted1<CFunctor,CRefCountServiceBase<1,CRefMT>>>::`vftable'{for `CRefCountServiceBase<1,CRefMT>'};
+      *((_DWORD *)v10 + 4) = RenderSphereInternal;
+      *((float *)v10 + 7) = z;
+      *((float *)v10 + 8) = flRadius;
+      *((_DWORD *)v10 + 12) = pMaterial;
+      v8->QueueFunctorInternal(v8, (CFunctor *)v10);
+    }
+    else
+    {
+      v8->QueueFunctorInternal(v8, 0);
+    }
+LABEL_47:
+    v13 = m_pObject->__vftable;
+    v15 = m_pObject;
+    goto LABEL_48;
+  }
+  v12 = nTheta;
+  v13 = m_pObject->__vftable;
+  v14 = 2 * nTheta * (nPhi - 1);
+  v15 = m_pObject;
+  if ( v14 )
+  {
+    v13->Bind(m_pObject, pMaterial, 0);
+    pMesh = m_pObject->GetDynamicMesh(m_pObject, 1, 0, 0, 0);
+    CMeshBuilder::CMeshBuilder(&meshBuilder);
+    CMeshBuilder::Begin(&meshBuilder, pMesh, MATERIAL_TRIANGLE_STRIP, v14, (nTheta + 1) * (2 * nPhi - 2));
+    flOONTheta_4 = 1.0 / (float)(nPhi - 1);
+    v16 = 0;
+    v56 = (float)(nPhi - 1);
+    v58 = (float)(nTheta - 1);
+    flOONTheta = 1.0 / v58;
+    for ( i = 0; v16 < nPhi; i = v16 )
+    {
+      v17 = 0;
+      if ( v12 > 0 )
+      {
+        v46 = (float)v16;
+        v18 = *(double *)__libm_sse2_sin().m128_u64;
+        idx = v18;
+        v20 = *(double *)__libm_sse2_cos(v19).m128_u64;
+        v21 = c._color[2];
+        *(float *)&v20 = v20;
+        v57 = *(float *)&v20 * flRadius;
+        v62 = v46 * flOONTheta_4;
+        do
+        {
+          v61 = (float)v17;
+          v22 = (float)((float)v17 / v58) * 6.283185307179586;
+          theta = v22;
+          v23 = *(double *)__libm_sse2_cos(v21).m128_u64;
+          *(float *)&vecPos = (float)(v23 * idx) * flRadius;
+          v24 = *(double *)__libm_sse2_sin().m128_u64;
+          *((float *)&vecPos + 1) = (float)(v24 * idx) * flRadius;
+          vecPos_8 = v57;
+          *(_QWORD *)&vecNormal.x = vecPos;
+          vecNormal.z = v57;
+          VectorNormalize(&vecNormal);
+          vecTangent.x = -0.0 - *((float *)&vecPos + 1);
+          LODWORD(vecTangent.y) = vecPos;
+          vecTangent.z = 0.0;
+          vecTangent.w = FLOAT_1_0;
+          VectorNormalize((struct Vector *)&vecTangent);
+          m_pCurrPosition = meshBuilder.m_VertexBuilder.m_pCurrPosition;
+          v26 = *((float *)&vecPos + 1) + vCenter->y;
+          v27 = vecPos_8 + vCenter->z;
+          *meshBuilder.m_VertexBuilder.m_pCurrPosition = vCenter->x + *(float *)&vecPos;
+          m_pCurrPosition[1] = v26;
+          m_pCurrPosition[2] = v27;
+          y = vecNormal.y;
+          v29 = vecNormal.z;
+          m_pCurrNormal = meshBuilder.m_VertexBuilder.m_pCurrNormal;
+          *meshBuilder.m_VertexBuilder.m_pCurrNormal = vecNormal.x;
+          m_pCurrNormal[1] = y;
+          m_pCurrNormal[2] = v29;
+          *(_DWORD *)meshBuilder.m_VertexBuilder.m_pCurrColor = c._color[2] | ((c._color[1] | ((c._color[0] | (c._color[3] << 8)) << 8)) << 8);
+          *(Vector4D *)((char *)meshBuilder.m_VertexBuilder.m_pUserData
+                      + meshBuilder.m_VertexBuilder.m_nCurrentVertex * meshBuilder.m_VertexBuilder.m_VertexSize_UserData) = vecTangent;
+          v31 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0];
+          *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0] = v61 * flOONTheta;
+          v31[1] = v62;
+          CVertexBuilder::AdvanceVertex(&meshBuilder.m_VertexBuilder);
+          ++v17;
+        }
+        while ( v17 < nTheta );
+        v12 = nTheta;
+        v16 = i;
+      }
+      ++v16;
+    }
+    v32 = 0;
+    ia = 0;
+    if ( nPhi - 1 > 0 )
+    {
+      m_nCurrentIndex = meshBuilder.m_IndexBuilder.m_nCurrentIndex;
+      v47 = 0;
+      do
+      {
+        if ( bInsideOut )
+        {
+          nIndexCount_4 = v12 - 1;
+          if ( v12 - 1 >= 0 )
+          {
+            v34 = v12 - 1 + v47;
+            do
+            {
+              meshBuilder.m_IndexBuilder.m_pIndices[m_nCurrentIndex] = v12
+                                                                     + v34
+                                                                     + LOWORD(meshBuilder.m_IndexBuilder.m_nIndexOffset);
+              v35 = meshBuilder.m_IndexBuilder.m_nIndexSize + meshBuilder.m_IndexBuilder.m_nCurrentIndex;
+              idxa = v34;
+              meshBuilder.m_IndexBuilder.m_nCurrentIndex += meshBuilder.m_IndexBuilder.m_nIndexSize;
+              if ( meshBuilder.m_IndexBuilder.m_nCurrentIndex > meshBuilder.m_IndexBuilder.m_nIndexCount )
+                meshBuilder.m_IndexBuilder.m_nIndexCount = v35;
+              meshBuilder.m_IndexBuilder.m_pIndices[v35] = LOWORD(meshBuilder.m_IndexBuilder.m_nIndexOffset) + v34;
+              m_nCurrentIndex = meshBuilder.m_IndexBuilder.m_nIndexSize + meshBuilder.m_IndexBuilder.m_nCurrentIndex;
+              meshBuilder.m_IndexBuilder.m_nCurrentIndex += meshBuilder.m_IndexBuilder.m_nIndexSize;
+              if ( meshBuilder.m_IndexBuilder.m_nCurrentIndex > meshBuilder.m_IndexBuilder.m_nIndexCount )
+                meshBuilder.m_IndexBuilder.m_nIndexCount = m_nCurrentIndex;
+              --v34;
+              --nIndexCount_4;
+            }
+            while ( nIndexCount_4 >= 0 );
+            m_pObject = pRenderContext.m_pObject;
+            v32 = idxa;
+          }
+        }
+        else
+        {
+          if ( v12 > 0 )
+          {
+            v36 = v47;
+            nIndexCount_4a = v12;
+            do
+            {
+              meshBuilder.m_IndexBuilder.m_pIndices[m_nCurrentIndex] = v12
+                                                                     + v36
+                                                                     + LOWORD(meshBuilder.m_IndexBuilder.m_nIndexOffset);
+              v37 = meshBuilder.m_IndexBuilder.m_nIndexSize + meshBuilder.m_IndexBuilder.m_nCurrentIndex;
+              idxb = v36;
+              meshBuilder.m_IndexBuilder.m_nCurrentIndex += meshBuilder.m_IndexBuilder.m_nIndexSize;
+              if ( meshBuilder.m_IndexBuilder.m_nCurrentIndex > meshBuilder.m_IndexBuilder.m_nIndexCount )
+                meshBuilder.m_IndexBuilder.m_nIndexCount = v37;
+              meshBuilder.m_IndexBuilder.m_pIndices[v37] = LOWORD(meshBuilder.m_IndexBuilder.m_nIndexOffset) + v36;
+              m_nCurrentIndex = meshBuilder.m_IndexBuilder.m_nIndexSize + meshBuilder.m_IndexBuilder.m_nCurrentIndex;
+              meshBuilder.m_IndexBuilder.m_nCurrentIndex += meshBuilder.m_IndexBuilder.m_nIndexSize;
+              if ( meshBuilder.m_IndexBuilder.m_nCurrentIndex > meshBuilder.m_IndexBuilder.m_nIndexCount )
+                meshBuilder.m_IndexBuilder.m_nIndexCount = m_nCurrentIndex;
+              ++v36;
+              --nIndexCount_4a;
+            }
+            while ( nIndexCount_4a );
+            m_pObject = pRenderContext.m_pObject;
+            v32 = idxb;
+          }
+          if ( ia < nPhi - 2 )
+          {
+            meshBuilder.m_IndexBuilder.m_pIndices[m_nCurrentIndex] = v32
+                                                                   + LOWORD(meshBuilder.m_IndexBuilder.m_nIndexOffset);
+            v38 = meshBuilder.m_IndexBuilder.m_nIndexSize + meshBuilder.m_IndexBuilder.m_nCurrentIndex;
+            meshBuilder.m_IndexBuilder.m_nCurrentIndex += meshBuilder.m_IndexBuilder.m_nIndexSize;
+            if ( meshBuilder.m_IndexBuilder.m_nCurrentIndex > meshBuilder.m_IndexBuilder.m_nIndexCount )
+              meshBuilder.m_IndexBuilder.m_nIndexCount = v38;
+            meshBuilder.m_IndexBuilder.m_pIndices[v38] = v12
+                                                       + LOWORD(meshBuilder.m_IndexBuilder.m_nIndexOffset)
+                                                       + v32
+                                                       + 1;
+            m_nCurrentIndex = meshBuilder.m_IndexBuilder.m_nIndexSize + meshBuilder.m_IndexBuilder.m_nCurrentIndex;
+            meshBuilder.m_IndexBuilder.m_nCurrentIndex += meshBuilder.m_IndexBuilder.m_nIndexSize;
+            if ( meshBuilder.m_IndexBuilder.m_nCurrentIndex > meshBuilder.m_IndexBuilder.m_nIndexCount )
+              meshBuilder.m_IndexBuilder.m_nIndexCount = m_nCurrentIndex;
+          }
+        }
+        v47 += v12;
+        ++ia;
+      }
+      while ( ia < nPhi - 1 );
+    }
+    if ( meshBuilder.m_bGenerateIndices )
+    {
+      m_Type = meshBuilder.m_Type;
+      v40 = CMeshBuilder::IndicesFromVertices(
+              &meshBuilder,
+              meshBuilder.m_Type,
+              meshBuilder.m_VertexBuilder.m_nVertexCount);
+      CIndexBuilder::GenerateIndices(&meshBuilder.m_IndexBuilder, m_Type, v40);
+    }
+    meshBuilder.m_pMesh->UnlockMesh(
+      meshBuilder.m_pMesh,
+      meshBuilder.m_VertexBuilder.m_nVertexCount,
+      meshBuilder.m_IndexBuilder.m_nIndexCount,
+      &meshBuilder);
+    meshBuilder.m_IndexBuilder.m_pIndexBuffer = 0;
+    meshBuilder.m_IndexBuilder.m_nMaxIndexCount = 0;
+    meshBuilder.m_VertexBuilder.m_nMaxVertexCount = 0;
+    meshBuilder.m_VertexBuilder.m_pVertexBuffer = 0;
+    meshBuilder.m_VertexBuilder.m_CompressionType = VERTEX_COMPRESSION_INVALID;
+    meshBuilder.m_pMesh = 0;
+    pMesh->Draw(pMesh, -1, 0);
+    if ( meshBuilder.m_VertexBuilder.m_pVertexBuffer
+      && meshBuilder.m_VertexBuilder.m_pVertexBuffer->IsDynamic(meshBuilder.m_VertexBuilder.m_pVertexBuffer) )
+    {
+      meshBuilder.m_VertexBuilder.m_pVertexBuffer->EndCastBuffer(meshBuilder.m_VertexBuilder.m_pVertexBuffer);
+    }
+    if ( meshBuilder.m_IndexBuilder.m_pIndexBuffer
+      && meshBuilder.m_IndexBuilder.m_pIndexBuffer->IsDynamic(meshBuilder.m_IndexBuilder.m_pIndexBuffer) )
+    {
+      meshBuilder.m_IndexBuilder.m_pIndexBuffer->EndCastBuffer(meshBuilder.m_IndexBuilder.m_pIndexBuffer);
+    }
+    goto LABEL_47;
+  }
+LABEL_48:
+  v13->EndRender(v15);
+  m_pObject->Release(m_pObject);
+}

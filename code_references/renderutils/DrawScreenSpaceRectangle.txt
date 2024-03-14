@@ -1,0 +1,394 @@
+void __cdecl DrawScreenSpaceRectangle(
+        IMaterial *pMaterial,
+        int nDestX,
+        int nDestY,
+        int nWidth,
+        int nHeight,
+        float flSrcTextureX0,
+        float flSrcTextureY0,
+        float flSrcTextureX1,
+        float flSrcTextureY1,
+        int nSrcTextureWidth,
+        int nSrcTextureHeight,
+        void *pClientRenderable,
+        int nXDice,
+        int nYDice,
+        float fDepth)
+{
+  int v15; // edi
+  IMatRenderContext *v16; // ebp
+  int v17; // edi
+  float v18; // xmm6_4
+  float v19; // xmm1_4
+  float v20; // xmm1_4
+  float v21; // xmm3_4
+  float v22; // xmm6_4
+  float v23; // xmm4_4
+  float v24; // xmm2_4
+  int v25; // eax
+  float v26; // xmm5_4
+  float v27; // xmm6_4
+  float v28; // xmm0_4
+  float v29; // xmm4_4
+  int v30; // esi
+  bool v31; // dl
+  unsigned __int8 *v32; // eax
+  float *v33; // eax
+  int v34; // xmm3_4
+  int v35; // xmm1_4
+  float *v36; // eax
+  float *v37; // eax
+  float *v38; // eax
+  int v39; // xmm7_4
+  float v40; // xmm5_4
+  IMesh *v41; // xmm4_4
+  int v42; // ebx
+  int v43; // esi
+  float v44; // xmm1_4
+  float v45; // xmm4_4
+  float v46; // xmm1_4
+  unsigned __int8 *m_pCurrColor; // eax
+  float v48; // xmm0_4
+  float *v49; // eax
+  float *v50; // eax
+  float *v51; // eax
+  float *v52; // eax
+  unsigned __int8 *v53; // eax
+  float *v54; // eax
+  float *v55; // eax
+  _DWORD *v56; // eax
+  char *v57; // eax
+  unsigned __int8 *v58; // eax
+  float *v59; // eax
+  float *v60; // eax
+  _DWORD *v61; // eax
+  char *v62; // eax
+  unsigned __int8 *v63; // eax
+  float *v64; // eax
+  float *v65; // eax
+  _DWORD *v66; // eax
+  char *v67; // eax
+  unsigned __int16 *m_pIndices; // esi
+  int v69; // eax
+  int v70; // [esp+28h] [ebp-258h]
+  float flTopY; // [esp+3Ch] [ebp-244h]
+  float flTopYa; // [esp+3Ch] [ebp-244h]
+  float flBottomV; // [esp+40h] [ebp-240h]
+  float flBottomVa; // [esp+40h] [ebp-240h]
+  float flRightU; // [esp+44h] [ebp-23Ch]
+  float flLeftU; // [esp+48h] [ebp-238h]
+  float flLeftUa; // [esp+48h] [ebp-238h]
+  float flLeftX; // [esp+4Ch] [ebp-234h]
+  float flLeftXa; // [esp+4Ch] [ebp-234h]
+  float flTopV; // [esp+50h] [ebp-230h]
+  int xSegments; // [esp+54h] [ebp-22Ch]
+  float v82; // [esp+58h] [ebp-228h]
+  int v83; // [esp+5Ch] [ebp-224h]
+  float flUWidth; // [esp+64h] [ebp-21Ch]
+  int vw; // [esp+68h] [ebp-218h] BYREF
+  IMesh *pMesh; // [esp+6Ch] [ebp-214h]
+  int v87; // [esp+70h] [ebp-210h] BYREF
+  float flWidth; // [esp+74h] [ebp-20Ch]
+  float v89; // [esp+78h] [ebp-208h]
+  int v90; // [esp+7Ch] [ebp-204h]
+  float v91; // [esp+80h] [ebp-200h]
+  int nScreenHeight; // [esp+84h] [ebp-1FCh]
+  int vy; // [esp+88h] [ebp-1F8h]
+  int vx; // [esp+8Ch] [ebp-1F4h] BYREF
+  int nScreenWidth; // [esp+90h] [ebp-1F0h] BYREF
+  CMeshBuilder meshBuilder; // [esp+94h] [ebp-1ECh] BYREF
+  int v97; // [esp+2C0h] [ebp+40h]
+
+  v16 = g_pMaterialSystem->GetRenderContext(g_pMaterialSystem);
+  if ( v16 )
+    v16->BeginRender(v16);
+  if ( nWidth <= 0 || nHeight <= 0 )
+  {
+    if ( !v16 )
+      return;
+  }
+  else
+  {
+    v16->MatrixMode(v16, MATERIAL_VIEW);
+    v16->PushMatrix(v16);
+    v16->LoadIdentity(v16);
+    v16->MatrixMode(v16, MATERIAL_PROJECTION);
+    v16->PushMatrix(v16);
+    v16->LoadIdentity(v16);
+    v16->Bind(v16, pMaterial, pClientRenderable);
+    v70 = v15;
+    v17 = nYDice;
+    if ( nYDice <= 1 )
+      v17 = 1;
+    CMeshBuilder::CMeshBuilder((CMeshBuilder *)&meshBuilder.m_VertexSize_BoneWeight);
+    LODWORD(flWidth) = ((int (__thiscall *)(IMatRenderContext *, int, _DWORD, _DWORD, _DWORD, int))v16->GetDynamicMesh)(
+                         v16,
+                         1,
+                         0,
+                         0,
+                         0,
+                         v70);
+    CMeshBuilder::Begin(
+      (CMeshBuilder *)&meshBuilder.m_VertexSize_BoneMatrixIndex,
+      (IMesh *)LODWORD(flWidth),
+      MATERIAL_QUADS,
+      v83 * v17);
+    v16->GetRenderTargetDimensions(v16, &meshBuilder.m_VertexSize_BoneWeight, &vx);
+    v18 = 0.0;
+    if ( nWidth <= 1 )
+      v19 = 0.0;
+    else
+      v19 = (float)(flSrcTextureY1 - flSrcTextureY0) / (float)(nWidth - 1);
+    if ( nHeight > 1 )
+      v18 = (float)(*(float *)&nSrcTextureWidth - flSrcTextureX1) / (float)(nHeight - 1);
+    v20 = v19 * 0.5;
+    v21 = 1.0 / (float)nSrcTextureHeight;
+    flLeftX = (float)((float)(v20 + flSrcTextureY1) + 0.5) * v21;
+    v22 = v18 * 0.5;
+    v23 = 1.0 / (float)(int)pClientRenderable;
+    flTopV = (float)((float)(flSrcTextureY0 + 0.5) - v20) * v21;
+    v82 = (float)((float)(flSrcTextureX1 + 0.5) - v22) * v23;
+    flLeftU = (float)((float)(v22 + *(float *)&nSrcTextureWidth) + 0.5) * v23;
+    v16->GetViewport(v16, &meshBuilder.m_VertexSize_Position, &nScreenWidth, &v87, &vw);
+    v24 = FLOAT_1_0;
+    v25 = v83;
+    v26 = (float)((float)((float)((float)(nWidth + nDestY) - 0.5) * 2.0) / (float)v87) - 1.0;
+    v27 = (float)((float)((float)((float)nDestY - 0.5) * 2.0) / (float)v87) - 1.0;
+    v28 = 1.0 - (float)((float)((float)((float)nWidth - 0.5) * 2.0) / (float)vw);
+    v29 = 1.0 - (float)((float)((float)((float)(nHeight + nWidth) - 0.5) * 2.0) / (float)vw);
+    flBottomV = v26;
+    *(float *)&xSegments = v27;
+    flRightU = v28;
+    flTopY = v29;
+    if ( v83 > 1 || v17 > 1 )
+    {
+      *(float *)&v39 = (float)(v26 - v27) / (float)v83;
+      v40 = (float)(v28 - v29) / (float)v17;
+      *(float *)&v41 = (float)(flLeftX - flTopV) / (float)v83;
+      v42 = 0;
+      v90 = v39;
+      flTopYa = v40;
+      pMesh = v41;
+      flBottomVa = (float)(flLeftU - v82) / (float)v17;
+      if ( v83 > 0 )
+      {
+        do
+        {
+          v43 = 0;
+          if ( v17 > 0 )
+          {
+            v44 = (float)(v42 + 1);
+            flLeftUa = (float)(*(float *)&v39 * v44) + v27;
+            flLeftXa = (float)(*(float *)&v41 * v44) + flTopV;
+            v45 = (float)(*(float *)&v41 * (float)v42) + flTopV;
+            v46 = (float)(*(float *)&v39 * (float)v42) + v27;
+            flUWidth = v45;
+            while ( 1 )
+            {
+              m_pCurrColor = meshBuilder.m_VertexBuilder.m_pCurrColor;
+              *(float *)meshBuilder.m_VertexBuilder.m_pCurrColor = v46;
+              m_pCurrColor += 4;
+              v48 = v28 - (float)(v40 * (float)v43);
+              *(float *)m_pCurrColor = v48;
+              v91 = v48;
+              *((_DWORD *)m_pCurrColor + 1) = v97;
+              v49 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0];
+              *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0] = 0.0;
+              v49[1] = 0.0;
+              v49[2] = v24;
+              v50 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[2];
+              *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[2] = v45;
+              v50[1] = (float)(flBottomVa * (float)v43) + v82;
+              v51 = (float *)((char *)meshBuilder.m_VertexBuilder.m_pWrinkle
+                            + (int)meshBuilder.m_VertexBuilder.m_pCurrNormal
+                            * meshBuilder.m_VertexBuilder.m_VertexSize_Wrinkle);
+              *v51++ = 0.0;
+              *v51 = v24;
+              v51[1] = 0.0;
+              v52 = (float *)((char *)meshBuilder.m_VertexBuilder.m_pUserData
+                            + (int)meshBuilder.m_VertexBuilder.m_pCurrNormal
+                            * meshBuilder.m_VertexBuilder.m_VertexSize_UserData);
+              v89 = (float)(flBottomVa * (float)v43) + v82;
+              *v52++ = v24;
+              *v52 = 0.0;
+              v52[1] = 0.0;
+              CVertexBuilder::AdvanceVertex((CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+              v53 = meshBuilder.m_VertexBuilder.m_pCurrColor;
+              *(float *)meshBuilder.m_VertexBuilder.m_pCurrColor = flLeftUa;
+              *((float *)v53 + 1) = v91;
+              *((_DWORD *)v53 + 2) = v97;
+              v54 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0];
+              *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0] = 0.0;
+              v54[1] = 0.0;
+              v54[2] = FLOAT_1_0;
+              v55 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[2];
+              *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[2] = flLeftXa;
+              v55[1] = v89;
+              v56 = (_DWORD *)((char *)meshBuilder.m_VertexBuilder.m_pWrinkle
+                             + (int)meshBuilder.m_VertexBuilder.m_pCurrNormal
+                             * meshBuilder.m_VertexBuilder.m_VertexSize_Wrinkle);
+              *v56++ = 0;
+              *v56 = LODWORD(FLOAT_1_0);
+              v56[1] = 0;
+              v57 = (char *)meshBuilder.m_VertexBuilder.m_pUserData
+                  + (int)meshBuilder.m_VertexBuilder.m_pCurrNormal * meshBuilder.m_VertexBuilder.m_VertexSize_UserData;
+              *(float *)v57 = FLOAT_1_0;
+              v57 += 4;
+              *(_DWORD *)v57 = 0;
+              *((_DWORD *)v57 + 1) = 0;
+              CVertexBuilder::AdvanceVertex((CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+              v58 = meshBuilder.m_VertexBuilder.m_pCurrColor;
+              *(float *)meshBuilder.m_VertexBuilder.m_pCurrColor = flLeftUa;
+              v58 += 4;
+              *(float *)v58 = flRightU - (float)(flTopYa * (float)++v43);
+              *(float *)&vy = flRightU - (float)(flTopYa * (float)v43);
+              *((_DWORD *)v58 + 1) = v97;
+              v59 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0];
+              *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0] = 0.0;
+              v59[1] = 0.0;
+              v59[2] = FLOAT_1_0;
+              v60 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[2];
+              *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[2] = flLeftXa;
+              v60[1] = (float)(flBottomVa * (float)v43) + v82;
+              v61 = (_DWORD *)((char *)meshBuilder.m_VertexBuilder.m_pWrinkle
+                             + (int)meshBuilder.m_VertexBuilder.m_pCurrNormal
+                             * meshBuilder.m_VertexBuilder.m_VertexSize_Wrinkle);
+              *v61++ = 0;
+              *v61 = LODWORD(FLOAT_1_0);
+              v61[1] = 0;
+              v62 = (char *)meshBuilder.m_VertexBuilder.m_pUserData
+                  + (int)meshBuilder.m_VertexBuilder.m_pCurrNormal * meshBuilder.m_VertexBuilder.m_VertexSize_UserData;
+              *(float *)&nScreenHeight = (float)(flBottomVa * (float)v43) + v82;
+              *(float *)v62 = FLOAT_1_0;
+              v62 += 4;
+              *(_DWORD *)v62 = 0;
+              *((_DWORD *)v62 + 1) = 0;
+              CVertexBuilder::AdvanceVertex((CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+              v63 = meshBuilder.m_VertexBuilder.m_pCurrColor;
+              *(float *)meshBuilder.m_VertexBuilder.m_pCurrColor = (float)(*(float *)&v39 * (float)v42) + v27;
+              *((float *)v63 + 1) = *(float *)&vy;
+              *((_DWORD *)v63 + 2) = v97;
+              v64 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0];
+              *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0] = 0.0;
+              v64[1] = 0.0;
+              v64[2] = FLOAT_1_0;
+              v65 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[2];
+              *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[2] = flUWidth;
+              v65[1] = *(float *)&nScreenHeight;
+              v66 = (_DWORD *)((char *)meshBuilder.m_VertexBuilder.m_pWrinkle
+                             + (int)meshBuilder.m_VertexBuilder.m_pCurrNormal
+                             * meshBuilder.m_VertexBuilder.m_VertexSize_Wrinkle);
+              *v66++ = 0;
+              *v66 = LODWORD(FLOAT_1_0);
+              v66[1] = 0;
+              v67 = (char *)meshBuilder.m_VertexBuilder.m_pUserData
+                  + (int)meshBuilder.m_VertexBuilder.m_pCurrNormal * meshBuilder.m_VertexBuilder.m_VertexSize_UserData;
+              *(float *)v67 = FLOAT_1_0;
+              v67 += 4;
+              *(_DWORD *)v67 = 0;
+              *((_DWORD *)v67 + 1) = 0;
+              CVertexBuilder::AdvanceVertex((CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+              v24 = FLOAT_1_0;
+              v28 = flRightU;
+              v40 = flTopYa;
+              if ( v43 >= v17 )
+                break;
+              v45 = flUWidth;
+              v46 = (float)(*(float *)&v39 * (float)v42) + v27;
+            }
+            v27 = *(float *)&xSegments;
+            v39 = v90;
+            v41 = pMesh;
+            v25 = v83;
+          }
+          ++v42;
+        }
+        while ( v42 < v25 );
+      }
+    }
+    else
+    {
+      v30 = 0;
+      while ( 1 )
+      {
+        v31 = !v30 || v30 == 3;
+        if ( (v30 & 2) != 0 )
+          v28 = v29;
+        if ( v31 )
+          v26 = v27;
+        v32 = meshBuilder.m_VertexBuilder.m_pCurrColor;
+        *(float *)meshBuilder.m_VertexBuilder.m_pCurrColor = v26;
+        *((float *)v32 + 1) = v28;
+        *((_DWORD *)v32 + 2) = v97;
+        v33 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0];
+        *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0] = 0.0;
+        *++v33 = 0.0;
+        v33[1] = v24;
+        v34 = (v30 & 2) != 0 ? LODWORD(flLeftU) : LODWORD(v82);
+        v35 = v31 ? LODWORD(flTopV) : LODWORD(flLeftX);
+        v36 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[2];
+        *(_DWORD *)meshBuilder.m_VertexBuilder.m_pCurrTexCoord[2] = v35;
+        *((_DWORD *)v36 + 1) = v34;
+        v37 = (float *)((char *)meshBuilder.m_VertexBuilder.m_pWrinkle
+                      + (int)meshBuilder.m_VertexBuilder.m_pCurrNormal
+                      * meshBuilder.m_VertexBuilder.m_VertexSize_Wrinkle);
+        *v37++ = 0.0;
+        *v37 = v24;
+        v37[1] = 0.0;
+        v38 = (float *)((char *)meshBuilder.m_VertexBuilder.m_pUserData
+                      + (int)meshBuilder.m_VertexBuilder.m_pCurrNormal
+                      * meshBuilder.m_VertexBuilder.m_VertexSize_UserData);
+        *v38++ = v24;
+        *v38 = 0.0;
+        v38[1] = 0.0;
+        CVertexBuilder::AdvanceVertex((CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+        if ( ++v30 >= 4 )
+          break;
+        v24 = FLOAT_1_0;
+        v27 = *(float *)&xSegments;
+        v26 = flBottomV;
+        v28 = flRightU;
+        v29 = flTopY;
+      }
+    }
+    if ( LOBYTE(meshBuilder.m_IndexBuilder.m_nOffset) )
+    {
+      m_pIndices = meshBuilder.m_IndexBuilder.m_pIndices;
+      v69 = CMeshBuilder::IndicesFromVertices(
+              (CMeshBuilder *)&meshBuilder.m_VertexSize_BoneMatrixIndex,
+              (MaterialPrimitiveType_t)meshBuilder.m_IndexBuilder.m_pIndices,
+              (int)meshBuilder.m_VertexBuilder.m_pCurrPosition);
+      CIndexBuilder::GenerateIndices(
+        (CIndexBuilder *)&meshBuilder.m_IndexBuilder.m_nFirstIndex,
+        (MaterialPrimitiveType_t)m_pIndices,
+        v69);
+    }
+    (*(void (__thiscall **)(_DWORD, float *, int))(**(_DWORD **)&meshBuilder.m_bGenerateIndices + 80))(
+      *(_DWORD *)&meshBuilder.m_bGenerateIndices,
+      meshBuilder.m_VertexBuilder.m_pCurrPosition,
+      meshBuilder.m_IndexBuilder.m_nCurrentIndex);
+    meshBuilder.m_IndexBuilder.m_nMaxIndexCount = 0;
+    meshBuilder.m_IndexBuilder.m_nIndexCount = 0;
+    meshBuilder.m_VertexBuilder.m_nVertexCount = 0;
+    *(_DWORD *)&meshBuilder.m_VertexBuilder.m_bModify = 0;
+    meshBuilder.m_VertexBuilder.m_NumBoneWeights = -1;
+    meshBuilder.m_Type = MATERIAL_POINTS;
+    (*(void (__thiscall **)(int, int, _DWORD))(*(_DWORD *)v87 + 48))(v87, -1, 0);
+    v16->MatrixMode(v16, MATERIAL_VIEW);
+    v16->PopMatrix(v16);
+    v16->MatrixMode(v16, MATERIAL_PROJECTION);
+    v16->PopMatrix(v16);
+    if ( *(_DWORD *)&meshBuilder.m_VertexBuilder.m_bModify
+      && (*(unsigned __int8 (__thiscall **)(_DWORD))(**(_DWORD **)&meshBuilder.m_VertexBuilder.m_bModify + 8))(*(_DWORD *)&meshBuilder.m_VertexBuilder.m_bModify) )
+    {
+      (*(void (__thiscall **)(_DWORD))(**(_DWORD **)&meshBuilder.m_VertexBuilder.m_bModify + 16))(*(_DWORD *)&meshBuilder.m_VertexBuilder.m_bModify);
+    }
+    if ( meshBuilder.m_IndexBuilder.m_nMaxIndexCount )
+    {
+      if ( (*(unsigned __int8 (__thiscall **)(int))(*(_DWORD *)meshBuilder.m_IndexBuilder.m_nMaxIndexCount + 8))(meshBuilder.m_IndexBuilder.m_nMaxIndexCount) )
+        (*(void (__thiscall **)(int))(*(_DWORD *)meshBuilder.m_IndexBuilder.m_nMaxIndexCount + 16))(meshBuilder.m_IndexBuilder.m_nMaxIndexCount);
+    }
+  }
+  v16->EndRender(v16);
+  v16->Release(v16);
+}

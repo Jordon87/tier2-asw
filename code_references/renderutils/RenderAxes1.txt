@@ -1,0 +1,168 @@
+// local variable allocation has failed, the output may be wrong!
+void __cdecl RenderAxes(const Vector *vOrigin, float flScale, bool bZBuffer)
+{
+  IMatRenderContext *v3; // ebp
+  ICallQueue *v4; // eax
+  __int64 v5; // xmm0_8
+  IMaterial *v6; // eax
+  IMesh *v7; // edi
+  unsigned __int8 *m_pCurrColor; // eax
+  float *v9; // esi
+  int v10; // xmm0_4
+  int v11; // xmm1_4
+  unsigned __int8 *v12; // eax
+  int v13; // xmm0_4
+  int v14; // xmm1_4
+  unsigned __int8 *v15; // eax
+  int v16; // xmm0_4
+  int v17; // xmm1_4
+  unsigned __int8 *v18; // eax
+  float v19; // xmm0_4
+  int v20; // xmm1_4
+  unsigned __int8 *v21; // eax
+  int v22; // xmm0_4
+  int v23; // xmm1_4
+  unsigned __int8 *v24; // eax
+  float v25; // xmm0_4
+  int v26; // xmm1_4
+  float v27; // xmm0_4
+  unsigned __int16 *m_pIndices; // esi
+  int v29; // eax
+  Vector arg1; // [esp+30h] [ebp-1F4h] BYREF
+  CMeshBuilder v31; // [esp+3Ch] [ebp-1E8h] BYREF
+  float v32; // [esp+234h] [ebp+10h]
+
+  InitializeStandardMaterials();
+  v3 = g_pMaterialSystem->GetRenderContext(g_pMaterialSystem);
+  if ( v3 )
+    v3->BeginRender(v3);
+  v4 = v3->GetCallQueue(v3);
+  if ( v4 )
+  {
+    v5 = *(_QWORD *)&vOrigin->x;
+    arg1.z = vOrigin->z;
+    *(_QWORD *)&arg1.x = v5;
+    ICallQueue::QueueCall<void,Vector const &,float,bool,Vector,float,bool>(
+      v4,
+      RenderAxesAtOrigin,
+      &arg1,
+      &flScale,
+      &bZBuffer);
+    v3->EndRender(v3);
+    v3->Release(v3);
+  }
+  else
+  {
+    v6 = s_pWireframe;
+    if ( !bZBuffer )
+      v6 = (IMaterial *)s_pWireframeIgnoreZ;
+    v3->Bind(v3, v6, 0);
+    v7 = v3->GetDynamicMesh(v3, 1, 0, 0, 0);
+    CMeshBuilder::CMeshBuilder((CMeshBuilder *)&v31.m_VertexSize_BoneMatrixIndex);
+    *(_DWORD *)&v31.m_bGenerateIndices = v7;
+    LOBYTE(v31.m_IndexBuilder.m_nOffset) = 1;
+    v31.m_IndexBuilder.m_pIndices = (_WORD *)("bad allocation" + 1);
+    v7->SetPrimitiveType(v7, MATERIAL_LINES);
+    (*(void (__thiscall **)(_DWORD, int, int, int *))(**(_DWORD **)&v31.m_bGenerateIndices + 68))(
+      *(_DWORD *)&v31.m_bGenerateIndices,
+      6,
+      6,
+      &v31.m_VertexSize_BoneMatrixIndex);
+    v31.m_IndexBuilder.m_nTotalIndexCount = (int)v31.m_pIndices;
+    v31.m_IndexBuilder.m_nIndexCount = (int)&v7->IIndexBuffer;
+    v31.m_IndexBuilder.m_nCurrentIndex = 0;
+    v31.m_IndexBuilder.m_nIndexOffset = 6;
+    LOBYTE(v31.m_VertexBuilder.m_VertexSize_BoneWeight) = 0;
+    v31.m_IndexBuilder.m_nFirstIndex = v31.m_nFirstIndex;
+    v31.m_IndexBuilder.m_nMaxIndexCount = v31.m_Type;
+    v31.m_IndexBuilder.m_nBufferOffset = 0;
+    CVertexBuilder::AttachBegin(
+      (CVertexBuilder *)&v31.m_VertexBuilder.m_VertexSize_BoneMatrixIndex,
+      v7,
+      6,
+      (const MeshDesc_t *)&v31.m_VertexSize_BoneMatrixIndex);
+    v31.m_IndexBuilder.m_nBufferOffset = 0;
+    CVertexBuilder::Reset((CVertexBuilder *)&v31.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+    m_pCurrColor = v31.m_VertexBuilder.m_pCurrColor;
+    v9 = (float *)bZBuffer;
+    v10 = *(_DWORD *)(bZBuffer + 4);
+    v11 = *(_DWORD *)(bZBuffer + 8);
+    *(float *)v31.m_VertexBuilder.m_pCurrColor = *(float *)bZBuffer;
+    m_pCurrColor += 4;
+    *(_DWORD *)m_pCurrColor = v10;
+    *((_DWORD *)m_pCurrColor + 1) = v11;
+    *v31.m_VertexBuilder.m_pCurrTexCoord[1] = NAN;
+    CVertexBuilder::AdvanceVertex((CVertexBuilder *)&v31.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+    v12 = v31.m_VertexBuilder.m_pCurrColor;
+    v13 = *((_DWORD *)v9 + 1);
+    v14 = *((_DWORD *)v9 + 2);
+    *(float *)v31.m_VertexBuilder.m_pCurrColor = *v9 + v32;
+    v12 += 4;
+    *(_DWORD *)v12 = v13;
+    *((_DWORD *)v12 + 1) = v14;
+    *v31.m_VertexBuilder.m_pCurrTexCoord[1] = NAN;
+    CVertexBuilder::AdvanceVertex((CVertexBuilder *)&v31.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+    v15 = v31.m_VertexBuilder.m_pCurrColor;
+    v16 = *((_DWORD *)v9 + 1);
+    v17 = *((_DWORD *)v9 + 2);
+    *(float *)v31.m_VertexBuilder.m_pCurrColor = *v9;
+    v15 += 4;
+    *(_DWORD *)v15 = v16;
+    *((_DWORD *)v15 + 1) = v17;
+    *v31.m_VertexBuilder.m_pCurrTexCoord[1] = -1.7146522e38;
+    CVertexBuilder::AdvanceVertex((CVertexBuilder *)&v31.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+    v18 = v31.m_VertexBuilder.m_pCurrColor;
+    v19 = v9[1];
+    v20 = *((_DWORD *)v9 + 2);
+    *(float *)v31.m_VertexBuilder.m_pCurrColor = *v9;
+    v18 += 4;
+    *(float *)v18 = v19 + v32;
+    *((_DWORD *)v18 + 1) = v20;
+    *v31.m_VertexBuilder.m_pCurrTexCoord[1] = -1.7146522e38;
+    CVertexBuilder::AdvanceVertex((CVertexBuilder *)&v31.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+    v21 = v31.m_VertexBuilder.m_pCurrColor;
+    v22 = *((_DWORD *)v9 + 1);
+    v23 = *((_DWORD *)v9 + 2);
+    *(float *)v31.m_VertexBuilder.m_pCurrColor = *v9;
+    v21 += 4;
+    *(_DWORD *)v21 = v22;
+    *((_DWORD *)v21 + 1) = v23;
+    *v31.m_VertexBuilder.m_pCurrTexCoord[1] = -1.7014636e38;
+    CVertexBuilder::AdvanceVertex((CVertexBuilder *)&v31.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+    v24 = v31.m_VertexBuilder.m_pCurrColor;
+    v25 = v9[2];
+    v26 = *((_DWORD *)v9 + 1);
+    *(float *)v31.m_VertexBuilder.m_pCurrColor = *v9;
+    v27 = v25 + v32;
+    v24 += 4;
+    *(_DWORD *)v24 = v26;
+    *((float *)v24 + 1) = v27;
+    *v31.m_VertexBuilder.m_pCurrTexCoord[1] = -1.7014636e38;
+    CVertexBuilder::AdvanceVertex((CVertexBuilder *)&v31.m_VertexBuilder.m_VertexSize_BoneMatrixIndex);
+    if ( LOBYTE(v31.m_IndexBuilder.m_nOffset) )
+    {
+      m_pIndices = v31.m_IndexBuilder.m_pIndices;
+      v29 = CMeshBuilder::IndicesFromVertices(
+              (CMeshBuilder *)&v31.m_VertexSize_BoneMatrixIndex,
+              (MaterialPrimitiveType_t)v31.m_IndexBuilder.m_pIndices,
+              (int)v31.m_VertexBuilder.m_pCurrPosition);
+      CIndexBuilder::GenerateIndices(
+        (CIndexBuilder *)&v31.m_IndexBuilder.m_nFirstIndex,
+        (MaterialPrimitiveType_t)m_pIndices,
+        v29);
+    }
+    (*(void (__thiscall **)(_DWORD, float *))(**(_DWORD **)&v31.m_bGenerateIndices + 80))(
+      *(_DWORD *)&v31.m_bGenerateIndices,
+      v31.m_VertexBuilder.m_pCurrPosition);
+    v31.m_IndexBuilder.m_pIndexBuffer = 0;
+    v31.m_IndexBuilder.m_nMaxIndexCount = 0;
+    v31.m_VertexBuilder.m_nMaxVertexCount = 0;
+    v31.m_VertexBuilder.m_pVertexBuffer = 0;
+    v31.m_VertexBuilder.m_CompressionType = VERTEX_COMPRESSION_INVALID;
+    v31.m_pMesh = 0;
+    v7->Draw(v7, -1, 0);
+    CMeshBuilder::~CMeshBuilder(&v31);
+    v3->EndRender(v3);
+    v3->Release(v3);
+  }
+}

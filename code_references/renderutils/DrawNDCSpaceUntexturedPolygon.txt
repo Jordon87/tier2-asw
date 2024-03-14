@@ -1,0 +1,84 @@
+void __cdecl DrawNDCSpaceUntexturedPolygon(
+        IMaterial *pMaterial,
+        int nVertexCount,
+        Vector2D *pScreenSpaceCoordinates,
+        void *pClientRenderable)
+{
+  IMatRenderContext *v4; // esi
+  int v5; // edi
+  IMesh *v6; // ebp
+  float *v7; // eax
+  int v8; // xmm0_4
+  signed int m_nOffset; // ebx
+  int v10; // eax
+  CMeshBuilder meshBuilder; // [esp+20h] [ebp-1ECh] BYREF
+  int v12; // [esp+220h] [ebp+14h]
+  void *v13; // [esp+224h] [ebp+18h]
+
+  v4 = g_pMaterialSystem->GetRenderContext(g_pMaterialSystem);
+  v5 = 0;
+  if ( v4 )
+    v4->BeginRender(v4);
+  v4->MatrixMode(v4, MATERIAL_VIEW);
+  v4->PushMatrix(v4);
+  v4->LoadIdentity(v4);
+  v4->MatrixMode(v4, MATERIAL_PROJECTION);
+  v4->PushMatrix(v4);
+  v4->LoadIdentity(v4);
+  v4->Bind(v4, (IMaterial *)pScreenSpaceCoordinates, v13);
+  CMeshBuilder::CMeshBuilder((CMeshBuilder *)&meshBuilder.m_VertexSize_Normal);
+  v6 = v4->GetDynamicMesh(v4, 1, 0, 0, 0);
+  CMeshBuilder::Begin((CMeshBuilder *)&meshBuilder.m_VertexSize_Normal, v6, MATERIAL_POLYGON, (int)pClientRenderable);
+  if ( (int)pClientRenderable > 0 )
+  {
+    do
+    {
+      v7 = meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0];
+      v8 = *(_DWORD *)(v12 + 8 * v5 + 4);
+      *meshBuilder.m_VertexBuilder.m_pCurrTexCoord[0] = *(float *)(v12 + 8 * v5);
+      *(_DWORD *)++v7 = v8;
+      v7[1] = 0.0;
+      CVertexBuilder::AdvanceVertex((CVertexBuilder *)&meshBuilder.m_VertexBuilder.m_VertexSize_Normal);
+      ++v5;
+    }
+    while ( v5 < (int)pClientRenderable );
+  }
+  if ( LOBYTE(meshBuilder.m_IndexBuilder.m_nFirstIndex) )
+  {
+    m_nOffset = meshBuilder.m_IndexBuilder.m_nOffset;
+    v10 = CMeshBuilder::IndicesFromVertices(
+            (CMeshBuilder *)&meshBuilder.m_VertexSize_Normal,
+            (MaterialPrimitiveType_t)meshBuilder.m_IndexBuilder.m_nOffset,
+            (int)meshBuilder.m_VertexBuilder.m_pCurrNormal);
+    CIndexBuilder::GenerateIndices(
+      (CIndexBuilder *)&meshBuilder.m_IndexBuilder.m_nIndexSize,
+      (MaterialPrimitiveType_t)m_nOffset,
+      v10);
+  }
+  (*(void (__thiscall **)(unsigned __int16 *, float *))(*(_DWORD *)meshBuilder.m_IndexBuilder.m_pIndices + 80))(
+    meshBuilder.m_IndexBuilder.m_pIndices,
+    meshBuilder.m_VertexBuilder.m_pCurrNormal);
+  meshBuilder.m_IndexBuilder.m_nMaxIndexCount = 0;
+  meshBuilder.m_IndexBuilder.m_nIndexCount = 0;
+  meshBuilder.m_VertexBuilder.m_nVertexCount = 0;
+  *(_DWORD *)&meshBuilder.m_VertexBuilder.m_bModify = 0;
+  meshBuilder.m_VertexBuilder.m_NumBoneWeights = -1;
+  meshBuilder.m_Type = MATERIAL_POINTS;
+  v6->Draw(v6, -1, 0);
+  v4->MatrixMode(v4, MATERIAL_VIEW);
+  v4->PopMatrix(v4);
+  v4->MatrixMode(v4, MATERIAL_PROJECTION);
+  v4->PopMatrix(v4);
+  if ( *(_DWORD *)&meshBuilder.m_VertexBuilder.m_bModify
+    && (*(unsigned __int8 (__thiscall **)(_DWORD))(**(_DWORD **)&meshBuilder.m_VertexBuilder.m_bModify + 8))(*(_DWORD *)&meshBuilder.m_VertexBuilder.m_bModify) )
+  {
+    (*(void (__thiscall **)(_DWORD))(**(_DWORD **)&meshBuilder.m_VertexBuilder.m_bModify + 16))(*(_DWORD *)&meshBuilder.m_VertexBuilder.m_bModify);
+  }
+  if ( meshBuilder.m_IndexBuilder.m_nMaxIndexCount
+    && (*(unsigned __int8 (__thiscall **)(int))(*(_DWORD *)meshBuilder.m_IndexBuilder.m_nMaxIndexCount + 8))(meshBuilder.m_IndexBuilder.m_nMaxIndexCount) )
+  {
+    (*(void (__thiscall **)(int))(*(_DWORD *)meshBuilder.m_IndexBuilder.m_nMaxIndexCount + 16))(meshBuilder.m_IndexBuilder.m_nMaxIndexCount);
+  }
+  v4->EndRender(v4);
+  v4->Release(v4);
+}

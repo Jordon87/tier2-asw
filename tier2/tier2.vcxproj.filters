@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ASW">
+      <UniqueIdentifier>{20bf0ced-009d-4b98-9680-9082ab01a350}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="OBJ\beamsegdraw.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\debug_lib_check.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\defaultfilesystem.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\fileutils.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\interval.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\keybindings.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\map_utils.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\MaterialSystemUtil.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\meshutils.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\p4helpers.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\resourceprecacher.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\riff.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\schemaclassbinding.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\socketcreator.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\soundutils.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\tier2.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\tier2_logging.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\tokenreader.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\util_init.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\utlstreambuffer.obj">
+      <Filter>ASW</Filter>
+    </Object>
+    <Object Include="OBJ\vconfig.obj">
+      <Filter>ASW</Filter>
+    </Object>
+  </ItemGroup>
+</Project>

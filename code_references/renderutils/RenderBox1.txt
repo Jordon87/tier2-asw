@@ -1,0 +1,17 @@
+void __cdecl RenderBox(
+        const Vector *vOrigin,
+        const QAngle *angles,
+        const Vector *vMins,
+        const Vector *vMaxs,
+        Color c,
+        bool bZBuffer,
+        bool bInsideOut)
+{
+  IMaterial *v7; // ecx
+
+  InitializeStandardMaterials();
+  v7 = s_pVertexColor;
+  if ( !bZBuffer )
+    v7 = (IMaterial *)s_pVertexColorIgnoreZ;
+  RenderBoxInternal(vOrigin, angles, vMins, vMaxs, c, v7, bInsideOut);
+}

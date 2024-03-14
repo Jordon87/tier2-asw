@@ -1,0 +1,4 @@
+void __cdecl RenderAxesAtOrigin(const Vector *vOrigin, float flScale, bool bZBuffer)
+{
+  RenderAxes(vOrigin, flScale, bZBuffer);
+}

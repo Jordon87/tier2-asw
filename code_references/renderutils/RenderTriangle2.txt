@@ -1,0 +1,5 @@
+// attributes: thunk
+void __cdecl RenderTriangle(const Vector *p1, const Vector *p2, const Vector *p3, Color c, IMaterial *pMaterial)
+{
+  RenderTriangleInternal(p1, p2, p3, c, pMaterial);
+}

@@ -1,0 +1,17 @@
+void __cdecl RenderSphere(
+        const Vector *vCenter,
+        float flRadius,
+        int nTheta,
+        int nPhi,
+        Color c,
+        bool bZBuffer,
+        bool bInsideOut)
+{
+  IMaterial *v7; // ecx
+
+  InitializeStandardMaterials();
+  v7 = s_pVertexColor;
+  if ( !bZBuffer )
+    v7 = (IMaterial *)s_pVertexColorIgnoreZ;
+  RenderSphereInternal(vCenter, flRadius, nTheta, nPhi, c, v7, bInsideOut);
+}

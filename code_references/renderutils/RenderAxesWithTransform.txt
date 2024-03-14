@@ -1,0 +1,4 @@
+void __cdecl RenderAxesWithTransform(const matrix3x4_t *transform, float flScale, bool bZBuffer)
+{
+  RenderAxes(transform, flScale, bZBuffer);
+}

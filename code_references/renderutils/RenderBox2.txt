@@ -1,0 +1,12 @@
+// attributes: thunk
+void __cdecl RenderBox(
+        const Vector *vOrigin,
+        const QAngle *angles,
+        const Vector *vMins,
+        const Vector *vMaxs,
+        Color c,
+        IMaterial *pMaterial,
+        bool bInsideOut)
+{
+  RenderBoxInternal(vOrigin, angles, vMins, vMaxs, c, pMaterial, bInsideOut);
+}
